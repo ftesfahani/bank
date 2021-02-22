@@ -1,6 +1,9 @@
 package com.bank.stroeer.service;
 
 
+import com.bank.stroeer.model.Account;
+import com.bank.stroeer.model.User;
+import com.bank.stroeer.repository.UserRepository;
 import com.bank.stroeer.util.AccountMapper;
 import com.bank.stroeer.dto.model.AccountDto;
 import com.bank.stroeer.repository.AccountRepository;
@@ -22,36 +25,28 @@ public class AccountService {
     private Logger LOG = LoggerFactory.getLogger(AccountService.class);
 
     private AccountRepository accountRepository;
+    private final UserRepository userRepository;
+
+    public AccountService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Autowired
     public void setAccountRepository(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }
 
-//    public ProductDto getProduct(String id) {
-//        try {
-//            LOG.info("Getting the product with given id:" + id);
-//            Optional<Product> product = productRepository.findById(id);
-//            if (product.isPresent()) {
-//                return ProductMapper.toProductDto(product.get());
-//            }
-//        } catch (Exception e) {
-//            LOG.error("An error occurred during product saving:" + e.getMessage());
-//        }
-//        throw new ProductNotFoundException();
-//    }
-
-//    public Account saveAccount(AccountDto accountDto) {
-//        Account productToSave;
-//        try {
-//            LOG.info("Saving account...");
-//            productToSave = accountRepository.save(AccountMapper.toAccountDto(accountDto));
-//            return productToSave;
-//        } catch (Exception e) {
-//            LOG.error("An error occurred during product saving:" + e.getMessage());
-//        }
-//        return new Account();
-//    }
+    public Account saveAccount(AccountDto accountDto, String userName) {
+        Account accountToSave;
+        try {
+            LOG.info("Saving account...");
+            User user = userRepository.findUserByUserName(userName).orElseThrow(() -> new RuntimeException("User not found"));
+            accountToSave = accountRepository.save(AccountMapper.fromAccountDto(accountDto, user));
+            return accountToSave;
+        } catch (Exception e) {
+            throw new RuntimeException("Exception Saving account");
+        }
+    }
 
     public List<AccountDto> loadAllUserAccounts(String userName){
         return accountRepository.findAllByUser_UserName(userName).stream()

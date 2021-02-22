@@ -14,5 +14,9 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
     List<Account> findAllByUser_UserName(String userName);
 
+    boolean existsByIBAN(String iban);
+
+    boolean existsByIBANAndIdNot(String iban, String id);
+
 }
 

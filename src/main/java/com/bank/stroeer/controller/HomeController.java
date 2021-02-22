@@ -32,5 +32,11 @@ public class HomeController {
         return "accounts";
     }
 
+    @RequestMapping(path = "/accounts/add", method = RequestMethod.GET)
+    public String createAccount(Model model) {
+        model.addAttribute("account", new AccountDto());
+        return "edit";
+    }
+
 
 }
